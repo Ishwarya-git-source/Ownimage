@@ -1,36 +1,21 @@
 pipeline {
     agent any
 
-    environment {
-        IMAGE_NAME = 'ishwarya2001/secondimage:latest'
-    }
-
     stages {
-        stage('Checkout Code') {
-            steps {
-                git branch: 'main', url: 'https://github.com/Ishwarya-git-source/Ownimage.git'
-            }
-        }
-
         stage('Build Application') {
             steps {
-                bat "docker build -t %IMAGE_NAME% ."
+                bat 'docker build -t ishwarya2001/secondimage:latest .'
             }
         }
-
-        // ✅ Removed 'Run Tests' stage — now part of Dockerfile
 
         stage('Push to Registry') {
             steps {
-                withDockerRegistry([credentialsId: 'docker-credentials', url: 'https://index.docker.io/v1/']) {
-                    bat "docker push %IMAGE_NAME%"
+                withCredentials([usernamePassword(credentialsId: 'docker-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    bat '''
+                    docker login -u %DOCKER_USER% -p %DOCKER_PASS%
+                    docker push ishwarya2001/secondimage:latest
+                    '''
                 }
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                bat "docker run -d -p 8080:8080 %IMAGE_NAME%"
             }
         }
     }
