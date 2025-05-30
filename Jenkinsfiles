@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'ishwarya2001/secondimage:latest' // Updated full image name
+        IMAGE_NAME = 'ishwarya2001/secondimage:latest'
     }
 
     stages {
@@ -18,11 +18,7 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
-            steps {
-                bat "docker run --rm %IMAGE_NAME% go test ./..."
-            }
-        }
+        // ✅ Removed 'Run Tests' stage — now part of Dockerfile
 
         stage('Push to Registry') {
             steps {
