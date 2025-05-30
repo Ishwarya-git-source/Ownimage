@@ -14,27 +14,27 @@ pipeline {
 
         stage('Build Application') {
             steps {
-                sh 'docker build -t ${IMAGE_NAME} .' // Build Docker image
+               bat 'docker build -t ${IMAGE_NAME} .' // Build Docker image
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'docker run --rm ${IMAGE_NAME} go test ./...' // Run tests inside the container
+                bat 'docker run --rm ${IMAGE_NAME} go test ./...' // Run tests inside the container
             }
         }
 
         stage('Push to Registry') {
             steps {
                 withDockerRegistry([credentialsId: 'docker-credentials', url: 'https://hub.docker.com/r/ishwarya2001/secondimage/tags']) {
-                    sh 'docker push ${IMAGE_NAME}' // Push image to registry
+                  bat 'docker push ${IMAGE_NAME}' // Push image to registry
                 }
             }
         }
 
         stage('Deploy') {
             steps {
-                sh 'docker run -d -p 8080:8080 ${IMAGE_NAME}' // Deploy the application
+                bat 'docker run -d -p 8080:8080 ${IMAGE_NAME}' // Deploy the application
             }
         }
     }
